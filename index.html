@@ -6,11 +6,7 @@
 <title>Engagement Contribution Drive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Karla:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-  /* ============================================================
-     CONFIG — edit these four lines, nothing else needed below
-     ============================================================ */
-</style>
+
 <script>
   // ---------- EDIT THIS SECTION ----------
   const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmeJaQ61kH12ZwptFGA4azxI59zEBOy5mh2dC2nMyhHEeoijPtJ1Nj5C5e7pcWzi4R-kenXXUV1CAQ/pub?output=csv";
@@ -19,9 +15,7 @@
   const COUPLE_NAMES = "Sylvia Jepkoech's Engagement";  // shown as the page title
   const EVENT_DATE = "13th August 2026";
   const EVENT_DETAILS = "Emdin Kibochii Farm · 10:00 AM";
-  const COORDINATOR = "Eric Ngeny";
-  const MPESA_NUMBER = "0711464440";  // the number contributions should be sent to
-  const AIRTEL_NUMBER = "0711464440"; // set a different number here if Airtel Money uses a different line
+  const COORDINATOR = "Erik";
   // ----------------------------------------
 </script>
 <style>
@@ -218,80 +212,6 @@
   @media (max-width: 480px){
     .stats{ grid-template-columns: 1fr 1fr; }
   }
-  .mpesa-card{
-    background: white;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 28px;
-  }
-  .mpesa-title{
-    font-family:'Fraunces', serif;
-    font-weight:600;
-    font-size: 18px;
-    margin: 0 0 6px;
-  }
-  .mpesa-sub{
-    font-size: 13px;
-    color: rgba(42,31,45,0.65);
-    margin: 0 0 16px;
-    line-height:1.5;
-  }
-  .mpesa-row{
-    display:flex;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-  .network-icon-btn{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap: 4px;
-    border: none;
-    border-radius: 10px;
-    width: 84px;
-    height: 68px;
-    padding: 0;
-    cursor:pointer;
-    transition: filter 0.15s ease, transform 0.1s ease;
-  }
-  .network-icon-btn:hover{ filter: brightness(0.92); }
-  .network-icon-btn:active{ transform: scale(0.97); }
-  .network-icon{
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.2);
-    color: white;
-    font-family:'Fraunces', serif;
-    font-weight:600;
-    font-size: 13px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-  .network-label{
-    color: white;
-    font-family:'Karla', sans-serif;
-    font-weight:700;
-    font-size: 10px;
-  }
-  .airtel-message{
-    margin-top: 14px;
-    background: rgba(198,40,40,0.08);
-    border: 1px solid rgba(198,40,40,0.25);
-    border-radius: 6px;
-    padding: 12px 14px;
-    font-size: 13px;
-    color: var(--plum);
-    line-height: 1.5;
-  }
-  .mpesa-fallback{
-    font-size: 12px;
-    color: rgba(42,31,45,0.55);
-    margin: 12px 0 0;
-  }
 </style>
 </head>
 <body>
@@ -312,23 +232,6 @@
 </div>
 
 <div class="content">
-
-  <div class="mpesa-card">
-    <p class="mpesa-title">Send your contribution</p>
-    <p class="mpesa-sub">Enter an amount, then tap the button — it opens your phone's own M-Pesa menu with the number and amount ready. You'll still confirm and enter your PIN yourself, on your phone, as usual.</p>
-    <div class="mpesa-row">
-      <button id="mpesaBtn" class="network-icon-btn" style="background:#2E7D32;">
-        <span class="network-icon">M</span>
-        <span class="network-label">M-Pesa</span>
-      </button>
-      <button id="airtelBtn" class="network-icon-btn" style="background:#C62828;">
-        <span class="network-icon">A</span>
-        <span class="network-label">Airtel Money</span>
-      </button>
-    </div>
-    <p class="mpesa-fallback">Tap a network, then enter the amount when asked. If M-Pesa doesn't open your dialer automatically, send manually: Send Money → <span id="mpesaNumberText">—</span> → amount → PIN.</p>
-    <div id="airtelMessage" class="airtel-message" style="display:none;"></div>
-  </div>
 
   <div class="stats">
     <div class="stat">
@@ -371,40 +274,6 @@
 
 <script>
 document.getElementById('coupleNames').textContent = COUPLE_NAMES;
-
-if (typeof MPESA_NUMBER !== 'undefined' && MPESA_NUMBER) {
-  document.getElementById('mpesaNumberText').textContent = MPESA_NUMBER;
-}
-// (currency symbol is now only shown inside the amount prompt, not as a standalone element)
-
-document.getElementById('mpesaBtn').addEventListener('click', () => {
-  const raw = window.prompt('Enter the amount you want to send (KES):');
-  if (raw === null) return; // cancelled
-  const amount = parseInt(raw.replace(/[^0-9]/g, ''), 10);
-  document.getElementById('airtelMessage').style.display = 'none';
-  if (!amount || amount <= 0) {
-    alert('Please enter a valid amount.');
-    return;
-  }
-  // Pre-fills the Send Money USSD flow: Send Money -> Enter Number -> Enter Amount.
-  // The PIN step still happens natively on the phone's own keypad, never on this page.
-  const ussd = `*334*1*1*${MPESA_NUMBER}*${amount}#`.replace('#', '%23');
-  window.location.href = 'tel:' + ussd;
-});
-
-document.getElementById('airtelBtn').addEventListener('click', () => {
-  const raw = window.prompt('Enter the amount you want to send (KES):');
-  if (raw === null) return; // cancelled
-  const amount = parseInt(raw.replace(/[^0-9]/g, ''), 10);
-  const box = document.getElementById('airtelMessage');
-  if (!amount || amount <= 0) {
-    alert('Please enter a valid amount.');
-    box.style.display = 'none';
-    return;
-  }
-  box.textContent = `Send ${CURRENCY_SYMBOL}${amount.toLocaleString('en-US')} via Airtel Money: dial *185#, choose Send Money, enter ${AIRTEL_NUMBER}, enter the amount, then confirm with your PIN on your own phone.`;
-  box.style.display = 'block';
-});
 if (typeof EVENT_DATE !== 'undefined' && EVENT_DATE) {
   document.getElementById('eventDate').textContent = 'Celebrating on ' + EVENT_DATE;
 }
