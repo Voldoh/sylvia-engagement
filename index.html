@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engagement Contribution Drive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Karla:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     CONFIG — edit these four lines, nothing else needed below
+     ============================================================ */
+</style>
+<script>
+  // ---------- EDIT THIS SECTION ----------
+  const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTmeJaQ61kH12ZwptFGA4azxI59zEBOy5mh2dC2nMyhHEeoijPtJ1Nj5C5e7pcWzi4R-kenXXUV1CAQ/pub?output=csv";
+  const CURRENCY_SYMBOL = "KES ";      // e.g. "KES ", "$", "KSh "
+  const GOAL_AMOUNT = 0;               // set a number to show a progress garland, or leave 0 to hide it
+  const COUPLE_NAMES = "Sylvia Jepkoech's Engagement";  // shown as the page title
+  const EVENT_DATE = "13th August 2026";
+  const EVENT_DETAILS = "Emdin Kibochii Farm · 10:00 AM";
+  const COORDINATOR = "Erik";
+  // ----------------------------------------
+</script>
+<style>
+  :root{
+    --ink-green: #1F3A2E;
+    --ink-green-deep: #16281F;
+    --cream: #F6EFE3;
+    --gold: #B8863B;
+    --gold-soft: #DDC28A;
+    --blush: #E8B4B8;
+    --plum: #2A1F2D;
+    --line: rgba(42,31,45,0.12);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background: var(--cream);
+    color: var(--plum);
+    font-family:'Karla', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .hero{
+    background: linear-gradient(180deg, var(--ink-green) 0%, var(--ink-green-deep) 100%);
+    color: var(--cream);
+    padding: 64px 24px 40px;
+    text-align:center;
+  }
+  .eyebrow{
+    text-transform:uppercase;
+    letter-spacing: 0.22em;
+    font-size: 12px;
+    color: var(--gold-soft);
+    margin: 0 0 14px;
+    font-weight:700;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size: clamp(36px, 7vw, 64px);
+    margin: 0 0 10px;
+    line-height:1.05;
+  }
+  .hero p.sub{
+    font-style: italic;
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    color: rgba(246,239,227,0.75);
+    font-size: 18px;
+    margin: 0;
+  }
+
+  /* Garland / bunting progress bar — the signature element */
+  .garland-wrap{
+    max-width: 720px;
+    margin: 40px auto 0;
+    padding: 0 24px;
+  }
+  .garland-label{
+    display:flex;
+    justify-content:space-between;
+    font-family:'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--gold-soft);
+    margin-bottom: 6px;
+  }
+  svg.garland{ width:100%; height:56px; display:block; }
+  .flag-outline{ fill: none; stroke: rgba(246,239,227,0.35); stroke-width:1.5; }
+  .flag-filled{ fill: var(--gold); stroke: var(--gold); }
+  .garland-string{ stroke: rgba(246,239,227,0.5); stroke-width:1.5; }
+
+  .content{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .stats{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .stat{
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 18px 16px;
+    text-align:center;
+  }
+  .stat .num{
+    font-family:'Space Mono', monospace;
+    font-weight:700;
+    font-size: clamp(18px, 4vw, 26px);
+    display:block;
+  }
+  .stat .lbl{
+    font-size: 12px;
+    text-transform:uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(42,31,45,0.6);
+  }
+
+  .filters{
+    display:flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .chip{
+    font-family:'Karla', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1.5px solid var(--gold);
+    background: transparent;
+    color: var(--gold);
+    cursor:pointer;
+    transition: all 0.15s ease;
+  }
+  .chip.active, .chip:hover{
+    background: var(--gold);
+    color: white;
+  }
+
+  table{
+    width:100%;
+    border-collapse: collapse;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow:hidden;
+  }
+  thead th{
+    text-align:left;
+    font-size: 11px;
+    text-transform:uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(42,31,45,0.55);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  tbody td{
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--line);
+    font-size: 15px;
+  }
+  tbody tr:last-child td{ border-bottom:none; }
+  td.amount{
+    font-family:'Space Mono', monospace;
+    font-weight:700;
+    text-align:right;
+  }
+  .status-tag{
+    display:inline-block;
+    font-size: 11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+  .status-paid{ background: rgba(46,125,50,0.15); color: #2E7D32; }
+  .status-pledged{ background: rgba(230,178,29,0.22); color: #8A6D1A; }
+
+  .legend{
+    display:flex;
+    justify-content:center;
+    gap: 24px;
+    padding: 4px 24px 20px;
+    font-size: 13px;
+    color: rgba(42,31,45,0.65);
+  }
+  .legend-item{ display:flex; align-items:center; gap:8px; }
+  .legend-dot{ width:11px; height:11px; border-radius:50%; display:inline-block; }
+  .legend-dot.paid{ background:#2E7D32; }
+  .legend-dot.pledge{ background:#E6B21D; }
+
+  .empty, .error{
+    text-align:center;
+    padding: 40px 20px;
+    color: rgba(42,31,45,0.6);
+    font-style: italic;
+  }
+  .error{ color: #a13d3d; }
+
+  footer{
+    text-align:center;
+    padding: 24px;
+    font-size: 12px;
+    color: rgba(42,31,45,0.45);
+  }
+
+  @media (max-width: 480px){
+    .stats{ grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <p class="eyebrow">Contribution Drive</p>
+  <h1 id="coupleNames">Loading…</h1>
+  <p class="sub" id="eventDate">Every gift, big or small, is a thread in this celebration</p>
+  <p class="sub" id="eventDetails" style="font-style:normal; font-size:14px; opacity:0.85; margin-top:6px;"></p>
+
+  <div class="garland-wrap" id="garlandWrap" style="display:none;">
+    <div class="garland-label">
+      <span id="garlandCurrent">—</span>
+      <span id="garlandGoal">—</span>
+    </div>
+    <svg class="garland" id="garlandSvg" viewBox="0 0 700 56" preserveAspectRatio="none"></svg>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="stats">
+    <div class="stat">
+      <span class="num" id="statTotal">—</span>
+      <span class="lbl">Total raised</span>
+    </div>
+    <div class="stat">
+      <span class="num" id="statPledged">—</span>
+      <span class="lbl">Pledged</span>
+    </div>
+    <div class="stat">
+      <span class="num" id="statCount">—</span>
+      <span class="lbl">Contributors</span>
+    </div>
+  </div>
+
+  <div class="filters">
+    <button class="chip active" data-filter="all">All</button>
+    <button class="chip" data-filter="paid">Paid</button>
+    <button class="chip" data-filter="pledge">Pledged</button>
+  </div>
+
+  <div id="tableWrap">
+    <div class="empty">Loading contributors…</div>
+  </div>
+
+  <div class="legend">
+    <span class="legend-item"><span class="legend-dot paid"></span> Paid</span>
+    <span class="legend-item"><span class="legend-dot pledge"></span> Pledged</span>
+  </div>
+
+</div>
+
+<footer>Coordinated by <span id="coordinatorName">the Coordinator</span> · Updates automatically from the linked Google Sheet.</footer>
+<script>
+  if (typeof COORDINATOR !== 'undefined' && COORDINATOR) {
+    document.getElementById('coordinatorName').textContent = COORDINATOR;
+  }
+</script>
+
+<script>
+document.getElementById('coupleNames').textContent = COUPLE_NAMES;
+if (typeof EVENT_DATE !== 'undefined' && EVENT_DATE) {
+  document.getElementById('eventDate').textContent = 'Celebrating on ' + EVENT_DATE;
+}
+if (typeof EVENT_DETAILS !== 'undefined' && EVENT_DETAILS) {
+  document.getElementById('eventDetails').textContent = EVENT_DETAILS;
+}
+
+let ALL_ROWS = [];
+let currentFilter = 'all';
+
+function parseCSV(text){
+  const lines = text.replace(/\r/g,'').split('\n');
+  return lines.map(line => {
+    const cells = [];
+    let cur = '', inQuotes = false;
+    for (let i = 0; i < line.length; i++){
+      const ch = line[i];
+      if (ch === '"'){ inQuotes = !inQuotes; continue; }
+      if (ch === ',' && !inQuotes){ cells.push(cur); cur = ''; continue; }
+      cur += ch;
+    }
+    cells.push(cur);
+    return cells.map(c => c.trim());
+  }).filter(row => row.some(cell => cell.length > 0)); // drop fully-blank rows anywhere, including above the header
+}
+
+function findCol(header, names){
+  const lower = header.map(h => h.toLowerCase());
+  for (const n of names){
+    const idx = lower.indexOf(n);
+    if (idx !== -1) return idx;
+  }
+  return -1;
+}
+
+function formatMoney(n){
+  return CURRENCY_SYMBOL + Math.round(n).toLocaleString('en-US');
+}
+
+function normalizeStatus(s){
+  s = (s || '').toLowerCase().trim();
+  if (s.startsWith('paid')) return 'paid';
+  if (s.startsWith('pledg')) return 'pledge';
+  return 'pledge';
+}
+
+function render(){
+  const wrap = document.getElementById('tableWrap');
+  const rows = ALL_ROWS.filter(r => currentFilter === 'all' || r.status === currentFilter);
+
+  if (!rows.length){
+    wrap.innerHTML = '<div class="empty">No contributions to show yet.</div>';
+    return;
+  }
+
+  let html = '<table><thead><tr><th>Name</th><th>Status</th><th style="text-align:right">Amount</th></tr></thead><tbody>';
+  for (const r of rows){
+    const tagClass = r.status === 'paid' ? 'status-paid' : 'status-pledged';
+    const tagLabel = r.status === 'paid' ? 'Paid' : 'Pledged';
+    html += `<tr><td>${escapeHtml(r.name)}</td><td><span class="status-tag ${tagClass}">${tagLabel}</span></td><td class="amount">${formatMoney(r.amount)}</td></tr>`;
+  }
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+function escapeHtml(s){
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+function drawGarland(percent){
+  const svg = document.getElementById('garlandSvg');
+  const flagCount = 17;
+  const spacing = 700 / (flagCount + 1);
+  const filledCount = Math.round((percent / 100) * flagCount);
+  let html = `<line x1="0" y1="6" x2="700" y2="6" class="garland-string"/>`;
+  for (let i = 0; i < flagCount; i++){
+    const x = spacing * (i + 1) - 12;
+    const filled = i < filledCount;
+    const cls = filled ? 'flag-filled' : 'flag-outline';
+    html += `<path d="M ${x} 6 L ${x+24} 6 L ${x+12} 34 Z" class="${cls}"/>`;
+  }
+  svg.innerHTML = html;
+}
+
+function updateStatsAndGarland(){
+  const paidTotal = ALL_ROWS.filter(r => r.status === 'paid').reduce((a,r) => a + r.amount, 0);
+  const pledgeTotal = ALL_ROWS.filter(r => r.status === 'pledge').reduce((a,r) => a + r.amount, 0);
+
+  document.getElementById('statTotal').textContent = formatMoney(paidTotal);
+  document.getElementById('statPledged').textContent = formatMoney(pledgeTotal);
+  document.getElementById('statCount').textContent = ALL_ROWS.length;
+
+  if (GOAL_AMOUNT > 0){
+    document.getElementById('garlandWrap').style.display = 'block';
+    const percent = Math.min(100, (paidTotal / GOAL_AMOUNT) * 100);
+    document.getElementById('garlandCurrent').textContent = formatMoney(paidTotal) + ' raised';
+    document.getElementById('garlandGoal').textContent = 'Goal ' + formatMoney(GOAL_AMOUNT);
+    drawGarland(percent);
+  }
+}
+
+document.querySelectorAll('.chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    render();
+  });
+});
+
+async function loadData(){
+  const wrap = document.getElementById('tableWrap');
+  if (!SHEET_CSV_URL || SHEET_CSV_URL.indexOf('PASTE_YOUR') === 0){
+    wrap.innerHTML = '<div class="error">No Google Sheet linked yet. Open index.html and set SHEET_CSV_URL at the top.</div>';
+    return;
+  }
+  try{
+    const res = await fetch(SHEET_CSV_URL, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Fetch failed: ' + res.status);
+    const text = await res.text();
+    const rows = parseCSV(text);
+    if (!rows.length) throw new Error('Empty sheet');
+
+    const header = rows[0];
+    const nameCol = findCol(header, ['name']);
+    const amountCol = findCol(header, ['amount']);
+    const statusCol = findCol(header, ['status', 'pledge']);
+
+    if (nameCol === -1 || amountCol === -1){
+      throw new Error('Could not find Name/Amount columns');
+    }
+
+    ALL_ROWS = rows.slice(1)
+      .filter(r => r[nameCol] && r[nameCol].trim())
+      .map(r => ({
+        name: r[nameCol],
+        amount: parseFloat((r[amountCol] || '0').replace(/[^0-9.\-]/g, '')) || 0,
+        status: normalizeStatus(statusCol !== -1 ? r[statusCol] : '')
+      }));
+
+    updateStatsAndGarland();
+    render();
+  } catch(err){
+    wrap.innerHTML = '<div class="error">Couldn\'t load the sheet. Check that SHEET_CSV_URL is a valid published CSV link, and that Name/Amount columns exist.</div>';
+    console.error(err);
+  }
+}
+
+loadData();
+setInterval(loadData, 30000); // refresh every 30 seconds
+</script>
+</body>
+</html>
